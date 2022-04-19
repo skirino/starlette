@@ -157,8 +157,10 @@ class StaticFiles:
         self, path: str
     ) -> typing.Tuple[str, typing.Optional[os.stat_result]]:
         for directory in self.all_directories:
-            full_path = os.path.realpath(os.path.join(directory, path))
-            directory = os.path.realpath(directory)
+            if os.path.isabs(path):
+                continue
+            directory = os.path.normpath(directory)
+            full_path = os.path.normpath(os.path.join(directory, path))
             if os.path.commonprefix([full_path, directory]) != directory:
                 # Don't allow misbehaving clients to break out of the static files
                 # directory.
